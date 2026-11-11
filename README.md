@@ -1,6 +1,6 @@
-##Подготовка тенанта для devspace
+# Подготовка тенанта для devspace
 
-#1. Сети
+## 1. Сети
 ```
 git clone https://github.com/Dreyko-net/devspace_tenant.git
 cd devspace_tenant/tf_network/
@@ -11,4 +11,4 @@ terraform plan
 Для удаления удалить в файле network.tf строки **lifecycle { prevent_destroy = true }**
 
 
-#2. Сервера
+## 2. Сервера
