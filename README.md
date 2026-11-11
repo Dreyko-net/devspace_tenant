@@ -8,7 +8,7 @@ terraform init
 terraform plan
 ```
 Указать код клиента  
-Для удаления удалить в файле network.tf строки "lifecycle { prevent_destroy = true }"
+Для удаления удалить в файле network.tf строки **lifecycle { prevent_destroy = true }**
 
 
 #2. Сервера
