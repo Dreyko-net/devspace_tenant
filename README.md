@@ -7,7 +7,7 @@ cd devspace_tenant/tf_network/
 terraform init
 terraform plan
 ```
-Указать код клиента
+Указать код клиента  
 Для удаления удалить в файле network.tf строки "lifecycle { prevent_destroy = true }"
 
 
