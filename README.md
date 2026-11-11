@@ -1,1 +1,1 @@
-"# devspace_tenant" 
+Подготовка тенанта для devspace
