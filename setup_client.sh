@@ -55,6 +55,12 @@ if [[ "$net_exists" == "true" ]]; then
   if [[ "$action" == "destroy" ]]; then
     echo "Удаляем инфраструктуру клиента: ${client_code^^}. Для действий требуется ручное подтверждение."
     #Удаляем сервера по очереди
+    terraform -chdir="$virt_system/tf_gw" init
+    terraform -chdir="$virt_system/tf_gw" destroy \
+    -var "var__cs_code=${client_code^^}" \
+    -var "var__vm_name=gw.${client_code,,}.devspace.lan" \
+    -var "var__cs_gateway_a=$final_gateway"
+
     terraform -chdir="$virt_system/tf_dc" init
     terraform -chdir="$virt_system/tf_dc" destroy \
         -var "var__cs_code=${client_code^^}" \
