@@ -66,7 +66,7 @@ if [[ "$net_exists" == "true" ]]; then
         -var "var__vm_name=idp.${client_code,,}.devspace.lan"
 
     terraform -chdir="$virt_system/tf_app" init
-    terraform -chdir="$virt_system/tf_app" apply \
+    terraform -chdir="$virt_system/tf_app" destroy \
         -var "var__cs_code=${client_code^^}" \
         -var "var__vm_name=app-01.${client_code,,}.devspace.lan"    
     
