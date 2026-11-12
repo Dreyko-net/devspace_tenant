@@ -109,7 +109,7 @@ var__idp_ip=$(python3 -c '
 import sys, ipaddress
 ip = ipaddress.IPv4Address(sys.argv[1])
 print(ip + int(sys.argv[2]))
-' "$final_gateway" "2")
+' "$final_gateway" "3")
 
 echo "Создаём сервер IDP для нового клиента. Для действий требуется ручное подтверждение."
 terraform -chdir="$virt_system/tf_idp" init
@@ -124,7 +124,7 @@ var__app_ip=$(python3 -c '
 import sys, ipaddress
 ip = ipaddress.IPv4Address(sys.argv[1])
 print(ip + int(sys.argv[2]))
-' "$final_gateway" "2")
+' "$final_gateway" "30")
 
 echo "Создаём сервер APP для нового клиента. Для действий требуется ручное подтверждение."
 terraform -chdir="$virt_system/tf_app" init
