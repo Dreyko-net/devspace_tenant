@@ -54,7 +54,14 @@ rm -f "$virt_system/tf_data_net/tfplan.bin"
 if [[ "$net_exists" == "true" ]]; then
   if [[ "$action" == "destroy" ]]; then
     echo "Удаляем инфраструктуру клиента: ${client_code^^}. Для действий требуется ручное подтверждение."
-    #Удаление серверов в структуре клиента, потом сетей.
+    #Удаляем сервера по очереди
+    terraform -chdir="$virt_system/tf_freeipa" init
+    terraform -chdir="$virt_system/tf_freeipa" destroy \
+    -var "var__cs_code=${client_code^^}" \
+    -var "var__vm_name=dc.${client_code,,}.devspace.lan" \
+    -var "var__vm_ip=$var__freeipa_ip"
+    #Удаление сетей.
+    terraform -chdir="$virt_system/tf_network" init
     terraform -chdir="$virt_system/tf_network" destroy \
         -var "var__cs_code=${client_code^^}" \
         -var "var__cs_gateway_a=172.16.200.1"
