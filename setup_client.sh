@@ -46,7 +46,7 @@ net_exists=$(terraform -chdir="$virt_system/tf_data_net" show -json tfplan.bin \
   | python3 -c 'import sys, json; v=json.load(sys.stdin)["planned_values"]["outputs"]["net_exists"]["value"]; print("true" if v else "false")')
 
 new_gateway_a=$(terraform -chdir="$virt_system/tf_data_net" show -json tfplan.bin \
-  | python3 -c 'import sys, json; print(json.load(sys.stdin)["planned_values"]["outputs"]["new_gateway_a"]["value"])')
+  | python3 -c 'import sys, json; print(json.load(sys.stdin)["planned_values"]["outputs"]["final_gateway"]["value"])')
 
 rm -f "$virt_system/tf_data_net/tfplan.bin"
 
