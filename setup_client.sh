@@ -45,7 +45,7 @@ terraform -chdir="$virt_system/tf_data_net" plan \
 net_exists=$(terraform -chdir="$virt_system/tf_data_net" show -json tfplan.bin \
   | python3 -c 'import sys, json; v=json.load(sys.stdin)["planned_values"]["outputs"]["net_exists"]["value"]; print("true" if v else "false")')
 
-new_gateway_a=$(terraform -chdir="$virt_system/tf_data_net" show -json tfplan.bin \
+final_gateway=$(terraform -chdir="$virt_system/tf_data_net" show -json tfplan.bin \
   | python3 -c 'import sys, json; print(json.load(sys.stdin)["planned_values"]["outputs"]["final_gateway"]["value"])')
 
 rm -f "$virt_system/tf_data_net/tfplan.bin"
@@ -58,13 +58,11 @@ if [[ "$net_exists" == "true" ]]; then
     terraform -chdir="$virt_system/tf_freeipa" init
     terraform -chdir="$virt_system/tf_freeipa" destroy \
         -var "var__cs_code=${client_code^^}" \
-        -var "var__vm_name=dc.${client_code,,}.devspace.lan" \
-
+        -var "var__vm_name=dc.${client_code,,}.devspace.lan" 
     #Удаление сетей.
     terraform -chdir="$virt_system/tf_network" init
     terraform -chdir="$virt_system/tf_network" destroy \
-        -var "var__cs_code=${client_code^^}" \
-        -var "var__cs_gateway_a=172.16.200.1"
+        -var "var__cs_code=${client_code^^}" 
     exit 0
   else
     echo "Сети для такого клиента существуют. Дальнейшие действия с сетями не требуются."
@@ -75,7 +73,7 @@ else
   terraform -chdir="$virt_system/tf_network" init
   terraform -chdir="$virt_system/tf_network" apply \
     -var "var__cs_code=${client_code^^}" \
-    -var "var__cs_gateway_a=$new_gateway_a"
+    -var "var__cs_gateway_a=$final_gateway"
 fi
 
 # Действие 4. Создание серверов
@@ -84,7 +82,7 @@ var__freeipa_ip=$(python3 -c '
 import sys, ipaddress
 ip = ipaddress.IPv4Address(sys.argv[1])
 print(ip + int(sys.argv[2]))
-' "$new_gateway_a" "2")
+' "$final_gateway" "2")
 
 echo "Создаём сервер FreeIPA для нового клиента. Для действий требуется ручное подтверждение."
 terraform -chdir="$virt_system/tf_freeipa" init

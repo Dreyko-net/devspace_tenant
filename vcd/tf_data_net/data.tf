@@ -104,10 +104,10 @@ output "net_exists" {
   value       = local.net_exists
 }
 
-output "new_gateway_a" {
-  description = "Вычисленный gateway новой сети"
-  value       = local.new_gateway_a
-}
+# output "new_gateway_a" {
+#   description = "Вычисленный gateway новой сети"
+#   value       = local.new_gateway_a
+# }
 
 output "final_gateway" {
   description = "Итоговый gateway: существующей или новой сети"

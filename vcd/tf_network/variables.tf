@@ -1,6 +1,7 @@
 
 variable "var__cs_gateway_a" {
   type    = string
+  default = ""
 }
 
 variable "var__cs_code" {
