@@ -1,6 +1,5 @@
-resource "vcd_vapp_vm" "vm_freeipa" {
+resource "vcd_vm" "vm_freeipa" {
 
-  # vapp_name     = var.vapp_name
   name          = var.var__vm_name
   computer_name = var.var__vm_name
   power_on      = true
@@ -34,7 +33,7 @@ if [ "$1" = "postcustomization" ]; then
   # Разрешаем awx-admin выполнять sudo без пароля
   echo "awx-admin ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/awx-admin
   chmod 0440 /etc/sudoers.d/awx-admin
-  
+
   mkdir -p /home/awx-admin/.ssh
   echo "${var.ssh_public_key}" >> /home/awx-admin/.ssh/authorized_keys
   chown -R awx-admin:awx-admin /home/awx-admin/.ssh
