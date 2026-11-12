@@ -99,19 +99,9 @@ data "vcd_network_isolated_v2" "nets" {
 # Выходные значения
 # ------------------------------------------------------------
 
-output "net_name" {
-  description = "Имя целевой сети"
-  value       = local.net_name
-}
-
 output "net_exists" {
   description = "Сеть уже существует?"
   value       = local.net_exists
-}
-
-output "max_gateway" {
-  description = "Максимальный gateway среди существующих сетей (или дефолт)"
-  value       = local.max_gateway
 }
 
 output "new_gateway_a" {
@@ -119,7 +109,3 @@ output "new_gateway_a" {
   value       = local.new_gateway_a
 }
 
-output "final_gateway" {
-  description = "Итоговый gateway: существующей или новой сети"
-  value       = local.final_gateway
-}
