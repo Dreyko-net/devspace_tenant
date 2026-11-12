@@ -1,8 +1,8 @@
 resource "vcd_vapp_vm" "vm_freeipa" {
 
-  vapp_name     = var.vapp_name
-  name          = var.vm_name
-  computer_name = var.vm_name
+  # vapp_name     = var.vapp_name
+  name          = var.var__vm_name
+  computer_name = var.var__vm_name
   power_on      = true
 
   cpus = var.vm_hw["cpus"]
@@ -12,10 +12,11 @@ resource "vcd_vapp_vm" "vm_freeipa" {
   template_name = var.vm_image["template_name"]
 
   network {
-    name = var.network_name
-    type = "org"
-    ip_allocation_mode = "DHCP"
-    is_primary = true
+    type               = "org"
+    name               = "NET-${var.var__cs_code}-A"
+    is_primary         = true
+    ip_allocation_mode = "MANUAL"
+    ip                 = var.var__vm_ip
   }
 
   customization {
@@ -24,6 +25,16 @@ resource "vcd_vapp_vm" "vm_freeipa" {
 
 if [ "$1" = "postcustomization" ]; then
 
+  # Проверяем, существует ли пользователь. Если нет — создаём
+  if ! id -u awx-admin >/dev/null 2>&1; then
+    adduser --disabled-password --gecos "" awx-admin
+  fi
+  # Добавляем пользователя в группу sudo (если ещё не добавлен)
+  usermod -aG sudo awx-admin
+  # Разрешаем awx-admin выполнять sudo без пароля
+  echo "awx-admin ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/awx-admin
+  chmod 0440 /etc/sudoers.d/awx-admin
+  
   mkdir -p /home/awx-admin/.ssh
   echo "${var.ssh_public_key}" >> /home/awx-admin/.ssh/authorized_keys
   chown -R awx-admin:awx-admin /home/awx-admin/.ssh

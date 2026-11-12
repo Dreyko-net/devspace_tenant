@@ -39,7 +39,7 @@ fi
 # Действие 2. Проверяем существование сетей и получаем значения из плана
 terraform -chdir="$virt_system/tf_data_net" init
 terraform -chdir="$virt_system/tf_data_net" plan \
-  -var "var__cs_code=$client_code" \
+  -var "var__cs_code=${client_code^^}" \
   -out=tfplan.bin
 
 net_exists=$(terraform -chdir="$virt_system/tf_data_net" show -json tfplan.bin \
@@ -53,10 +53,10 @@ rm -f "$virt_system/tf_data_net/tfplan.bin"
 # Действие 3. Если сетей клиента нет, то создаём сети. Если есть и выбрано удаление, то удаляем.
 if [[ "$net_exists" == "true" ]]; then
   if [[ "$action" == "destroy" ]]; then
-    echo "Удаляем инфраструктуру клиента: $client_code. Для действий требуется ручное подтверждение."
+    echo "Удаляем инфраструктуру клиента: ${client_code^^}. Для действий требуется ручное подтверждение."
     #Удаление серверов в структуре клиента, потом сетей.
     terraform -chdir="$virt_system/tf_network" destroy \
-        -var "var__cs_code=$client_code" \
+        -var "var__cs_code=${client_code^^}" \
         -var "var__cs_gateway_a=172.16.200.1"
     exit 0
   else
@@ -67,9 +67,23 @@ else
   echo "Создаём сети для нового клиента. Для действий требуется ручное подтверждение."
   terraform -chdir="$virt_system/tf_network" init
   terraform -chdir="$virt_system/tf_network" apply \
-    -var "var__cs_code=$client_code" \
+    -var "var__cs_code=${client_code^^}" \
     -var "var__cs_gateway_a=$new_gateway_a"
 fi
 
 # Действие 4. Создание серверов
-# ...
+
+var__freeipa_ip=$(python3 -c '
+import sys, ipaddress
+ip = ipaddress.IPv4Address(sys.argv[1])
+print(ip + int(sys.argv[2]))
+' "$new_gateway_a" "2")
+
+echo "Создаём сервер FreeIPA для нового клиента. Для действий требуется ручное подтверждение."
+terraform -chdir="$virt_system/tf_freeipa" init
+terraform -chdir="$virt_system/tf_freeipa" apply \
+-var "var__cs_code=${client_code^^}" \
+-var "var__vm_name=dc.${client_code,,}.devspace.lan" \
+-var "var__vm_ip=$var__freeipa_ip"
+
+
