@@ -1,14 +1,15 @@
 # Подготовка тенанта для devspace
 
 ## 1. Сети
+Должны быть указаны переменные окружения, необходимые для подключения к системе виртуализации
+
 ```
 git clone https://github.com/Dreyko-net/devspace_tenant.git
-cd devspace_tenant/tf_network/
-terraform init
-terraform plan
+cd devspace_tenant/
+bash setup_client.sh
 ```
-Указать код клиента  
-Для удаления удалить в файле network.tf строки **lifecycle { prevent_destroy = true }**
+Указать код клиента (3-5 символов)
+Есть сеть отсутствует, будут созданы сети для клиента
 
 
 ## 2. Сервер 

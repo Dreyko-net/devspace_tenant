@@ -11,6 +11,20 @@ while [[ ! "${client_code}" =~ ^[A-Z0-9]{3,5}$ ]]; do
 done
 
 
+# Подготовка для удаления.
+echo "Что сделать?"
+echo "  1) Создать  [по умолчанию]"
+echo "  2) Удалить "
+read -r -p "Выбор [1]: " choice
+choice="${choice:-1}"
+
+case "$choice" in
+  1) action="create" ;;
+  2) action="destroy" ;;
+  *) echo "ERROR: неверный выбор: '$choice'. Допустимо: 1 или 2" >&2; exit 2 ;;
+esac
+
+
 # Действие 1. Определяем систему виртуализации
 virt_system=""
 case "1" in
@@ -21,6 +35,11 @@ if [[ -z "$virt_system" ]]; then
   echo "ERROR: не заданы переменные окружения для подключения к системе виртуализации" >&2
   exit 1
 fi
+
+if [[ "$action" == "destroy" ]]; then
+  echo "Удаляем инфраструктуру клиента: $client_code. Для действий требуется ручное подтверждение."
+  terraform -chdir="$virt_system/tf_network" destroy -var "var__cs_code=$client_code" -var "var__cs_gateway_a=172.16.200.1"
+
 
 # Действие 2. Проверяем существование сетей и получаем значение net_exists из плана
 terraform -chdir="$virt_system/tf_data_net" init
@@ -36,8 +55,9 @@ rm -f $virt_system/tf_data_net/tfplan.bin
 if [[ "$net_exists" == "True" ]]; then
   echo "Сети для такого клиента существуют. Дальнейшие действия с сетями не требуются."
 else
-  echo "Создаём сети дня нового клиента."
+  echo "Создаём сети дня нового клиента. Для действий требуется ручное подтверждение."
   terraform -chdir="$virt_system/tf_network" init
-  terraform -chdir="$virt_system/tf_network" plan -var "var__cs_code=$client_code" -var "var__cs_gateway_a=$new_gateway_a"
+  terraform -chdir="$virt_system/tf_network" apply -var "var__cs_code=$client_code" -var "var__cs_gateway_a=$new_gateway_a"
 fi
 
+# Действие 4. Создание серверов
