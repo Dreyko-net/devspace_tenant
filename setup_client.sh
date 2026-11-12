@@ -57,9 +57,10 @@ if [[ "$net_exists" == "true" ]]; then
     #Удаляем сервера по очереди
     terraform -chdir="$virt_system/tf_freeipa" init
     terraform -chdir="$virt_system/tf_freeipa" destroy \
-    -var "var__cs_code=${client_code^^}" \
-    -var "var__vm_name=dc.${client_code,,}.devspace.lan" \
-    -var "var__vm_ip=$var__freeipa_ip"
+        -var "var__cs_code=${client_code^^}" \
+        -var "var__vm_name=dc.${client_code,,}.devspace.lan" \
+        -var "var__vm_ip=$var__freeipa_ip"
+
     #Удаление сетей.
     terraform -chdir="$virt_system/tf_network" init
     terraform -chdir="$virt_system/tf_network" destroy \
