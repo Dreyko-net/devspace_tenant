@@ -39,6 +39,7 @@ fi
 # Действие 2. Удаление (если выбрано) — и выход
 if [[ "$action" == "destroy" ]]; then
   echo "Удаляем инфраструктуру клиента: $client_code. Для действий требуется ручное подтверждение."
+  #Удаление серверов в структуре клиента, потом сетей.
   terraform -chdir="$virt_system/tf_network" destroy \
     -var "var__cs_code=$client_code" \
     -var "var__cs_gateway_a=172.16.200.1"
