@@ -1,0 +1,4 @@
+freebsd_iso=FreeBSD-15.1-RELEASE-amd64-disc1.iso
+tmplt-rl-nox11=tmplt-rl-nox11
+template-ubuntu-nox11=template-ubuntu-nox11
+template-ubuntu-x11=template-ubuntu-x11
