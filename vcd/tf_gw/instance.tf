@@ -19,7 +19,7 @@ resource "vcd_vm" "vm_gw" {
   }
   lifecycle {
     ignore_changes = [
-      network.ip,          # игнорируем изменение IP первого NIC
+      network[0].ip,          # игнорируем изменение IP первого NIC
     ]
   }
   customization {
