@@ -18,7 +18,7 @@ variable "var__vm_ip" {
 variable "ssh_public_key" {
   type        = string
   description = "Содержимое публичного ключа для авторизации"
-  default = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEiaD8cDUz4SHZkmyPAeG1VE37YUNVRHX8Uk+HzcnK7U awx-admin@template-ubuntu-nox11"
+  default = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIETgvm9sT0ghbgaodR8pQexmkCum4Z4emg4XtTBsj9cX awx-admin@tmplt-rl-nox11"
 }
 
 variable "var__vm_name" {
@@ -26,7 +26,7 @@ variable "var__vm_name" {
 }
 variable "vm_image" {
   type = map
-  default =  { catalog_name = "Master", template_name = "template-ubuntu-nox11" }
+  default =  { catalog_name = "Master", template_name = "tmplt-rl-nox11" }
 }
 
 

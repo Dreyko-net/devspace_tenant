@@ -90,6 +90,13 @@ fi
 # Действие 4. Создание серверов
 # 4.1 GW
 
+echo "Создаём сервер DC (FreeIPA) для нового клиента. Для действий требуется ручное подтверждение."
+terraform -chdir="$virt_system/tf_dc" init
+terraform -chdir="$virt_system/tf_dc" apply \
+    -var "var__cs_code=${client_code^^}" \
+    -var "var__vm_name=gw.${client_code,,}.devspace.lan" 
+
+
 # 4.2 Контроллер
 var__dc_ip=$(python3 -c '
 import sys, ipaddress
@@ -132,3 +139,6 @@ terraform -chdir="$virt_system/tf_app" apply \
     -var "var__cs_code=${client_code^^}" \
     -var "var__vm_name=app-01.${client_code,,}.devspace.lan" \
     -var "var__vm_ip=$var__app_ip"
+
+роки все сервера кроме GW
+    bld + GW
