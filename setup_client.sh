@@ -91,8 +91,8 @@ fi
 # 4.1 GW
 
 echo "Создаём сервер DC (FreeIPA) для нового клиента. Для действий требуется ручное подтверждение."
-terraform -chdir="$virt_system/tf_dc" init
-terraform -chdir="$virt_system/tf_dc" apply \
+terraform -chdir="$virt_system/tf_gw" init
+terraform -chdir="$virt_system/tf_gw" apply \
     -var "var__cs_code=${client_code^^}" \
     -var "var__vm_name=gw.${client_code,,}.devspace.lan" 
 
