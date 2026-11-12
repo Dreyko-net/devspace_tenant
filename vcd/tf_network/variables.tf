@@ -1,7 +1,7 @@
 
 variable "var__cs_gateway_a" {
   type    = string
-  default = ""
+  default = "172.16.200.1"
 }
 
 variable "var__cs_code" {
