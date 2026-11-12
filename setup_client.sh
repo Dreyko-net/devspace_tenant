@@ -55,10 +55,21 @@ if [[ "$net_exists" == "true" ]]; then
   if [[ "$action" == "destroy" ]]; then
     echo "Удаляем инфраструктуру клиента: ${client_code^^}. Для действий требуется ручное подтверждение."
     #Удаляем сервера по очереди
-    terraform -chdir="$virt_system/tf_freeipa" init
-    terraform -chdir="$virt_system/tf_freeipa" destroy \
+    terraform -chdir="$virt_system/tf_dc" init
+    terraform -chdir="$virt_system/tf_dc" destroy \
         -var "var__cs_code=${client_code^^}" \
         -var "var__vm_name=dc.${client_code,,}.devspace.lan" 
+    
+    terraform -chdir="$virt_system/tf_idp" init
+    terraform -chdir="$virt_system/tf_idp" destroy \
+        -var "var__cs_code=${client_code^^}" \
+        -var "var__vm_name=idp.${client_code,,}.devspace.lan"
+
+    terraform -chdir="$virt_system/tf_app" init
+    terraform -chdir="$virt_system/tf_app" apply \
+        -var "var__cs_code=${client_code^^}" \
+        -var "var__vm_name=app-01.${client_code,,}.devspace.lan"    
+    
     #Удаление сетей.
     terraform -chdir="$virt_system/tf_network" init
     terraform -chdir="$virt_system/tf_network" destroy \
@@ -77,18 +88,47 @@ else
 fi
 
 # Действие 4. Создание серверов
+# 4.1 GW
 
-var__freeipa_ip=$(python3 -c '
+# 4.2 Контроллер
+var__dc_ip=$(python3 -c '
 import sys, ipaddress
 ip = ipaddress.IPv4Address(sys.argv[1])
 print(ip + int(sys.argv[2]))
 ' "$final_gateway" "2")
 
-echo "Создаём сервер FreeIPA для нового клиента. Для действий требуется ручное подтверждение."
-terraform -chdir="$virt_system/tf_freeipa" init
-terraform -chdir="$virt_system/tf_freeipa" apply \
--var "var__cs_code=${client_code^^}" \
--var "var__vm_name=dc.${client_code,,}.devspace.lan" \
--var "var__vm_ip=$var__freeipa_ip"
+echo "Создаём сервер DC (FreeIPA) для нового клиента. Для действий требуется ручное подтверждение."
+terraform -chdir="$virt_system/tf_dc" init
+terraform -chdir="$virt_system/tf_dc" apply \
+    -var "var__cs_code=${client_code^^}" \
+    -var "var__vm_name=dc.${client_code,,}.devspace.lan" \
+    -var "var__vm_ip=$var__dc_ip"
+
+# 4.3 IDP
+var__idp_ip=$(python3 -c '
+import sys, ipaddress
+ip = ipaddress.IPv4Address(sys.argv[1])
+print(ip + int(sys.argv[2]))
+' "$final_gateway" "2")
+
+echo "Создаём сервер IDP для нового клиента. Для действий требуется ручное подтверждение."
+terraform -chdir="$virt_system/tf_idp" init
+terraform -chdir="$virt_system/tf_idp" apply \
+    -var "var__cs_code=${client_code^^}" \
+    -var "var__vm_name=idp.${client_code,,}.devspace.lan" \
+    -var "var__vm_ip=$var__idp_ip"
 
 
+# 4.4 APP
+var__app_ip=$(python3 -c '
+import sys, ipaddress
+ip = ipaddress.IPv4Address(sys.argv[1])
+print(ip + int(sys.argv[2]))
+' "$final_gateway" "2")
+
+echo "Создаём сервер APP для нового клиента. Для действий требуется ручное подтверждение."
+terraform -chdir="$virt_system/tf_app" init
+terraform -chdir="$virt_system/tf_app" apply \
+    -var "var__cs_code=${client_code^^}" \
+    -var "var__vm_name=app-01.${client_code,,}.devspace.lan" \
+    -var "var__vm_ip=$var__app_ip"

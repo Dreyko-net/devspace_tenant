@@ -1,4 +1,4 @@
-resource "vcd_vm" "vm_freeipa" {
+resource "vcd_vm" "vm_app" {
 
   name          = var.var__vm_name
   computer_name = var.var__vm_name
