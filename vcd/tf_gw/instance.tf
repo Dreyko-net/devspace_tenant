@@ -22,28 +22,28 @@ resource "vcd_vm" "vm_gw" {
     name               = "NET-${var.var__cs_code}-A"
     is_primary         = true
     ip_allocation_mode = "MANUAL"
-    ip                 = var.ip_net_a
+    ip                 = local.ip_net_a
   }
   network {
     type               = "org"
     name               = "NET-${var.var__cs_code}-B"
     is_primary         = true
     ip_allocation_mode = "MANUAL"
-    ip                 = var.ip_net_b
+    ip                 = local.ip_net_b
   }
   network {
     type               = "org"
     name               = "NET-${var.var__cs_code}-C"
     is_primary         = true
     ip_allocation_mode = "MANUAL"
-    ip                 = var.ip_net_c
+    ip                 = local.ip_net_c
   }
   network {
     type               = "org"
     name               = "NET-${var.var__cs_code}-D"
     is_primary         = true
     ip_allocation_mode = "MANUAL"
-    ip                 = var.ip_net_d
+    ip                 = local.ip_net_d
   }
 
   lifecycle {
