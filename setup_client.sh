@@ -94,7 +94,8 @@ echo "Создаём сервер DC (FreeIPA) для нового клиент�
 terraform -chdir="$virt_system/tf_gw" init
 terraform -chdir="$virt_system/tf_gw" apply \
     -var "var__cs_code=${client_code^^}" \
-    -var "var__vm_name=gw.${client_code,,}.devspace.lan" 
+    -var "var__vm_name=gw.${client_code,,}.devspace.lan" \
+    -var "var__cs_gateway_a=$final_gateway"
 
 
 # 4.2 Контроллер

@@ -24,7 +24,7 @@ variable "vm_hw" {
     "memory" = 1024
   }
 }
-variable "var__vm_ip" {
+variable "var__cs_gateway_a" {
   type    = string
   default = ""
 }
@@ -44,4 +44,21 @@ variable "vm_image" {
   default =  { catalog_name = "Master", template_name = "template-gw" }
 }
 
+## Расчёт ip адреса на основе var__cs_gateway_a
+locals {
+  o = split(".", var.var__cs_gateway_a)
 
+  ip_net_a = format("%d.%d.%d.%d",
+    parseint(local.o[0], 10), parseint(local.o[1], 10),
+    parseint(local.o[2], 10), parseint(local.o[3], 10) + 1)
+  ip_net_b = format("%d.%d.%d.%d",
+    parseint(local.o[0], 10), parseint(local.o[1], 10),
+    parseint(local.o[2], 10), parseint(local.o[3], 10) + 65)
+  ip_net_c = format("%d.%d.%d.%d",
+    parseint(local.o[0], 10), parseint(local.o[1], 10),
+    parseint(local.o[2], 10), parseint(local.o[3], 10) + 129)
+  ip_net_d = format("%d.%d.%d.%d",
+    parseint(local.o[0], 10), parseint(local.o[1], 10),
+    parseint(local.o[2], 10) + 1, parseint(local.o[3], 10) + 1)
+
+}
