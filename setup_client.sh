@@ -36,17 +36,7 @@ if [[ -z "$virt_system" ]]; then
   exit 1
 fi
 
-# Действие 2. Удаление (если выбрано) — и выход
-if [[ "$action" == "destroy" ]]; then
-  echo "Удаляем инфраструктуру клиента: $client_code. Для действий требуется ручное подтверждение."
-  #Удаление серверов в структуре клиента, потом сетей.
-  terraform -chdir="$virt_system/tf_network" destroy \
-    -var "var__cs_code=$client_code" \
-    -var "var__cs_gateway_a=172.16.200.1"
-  exit 0
-fi
-
-# Действие 3. Проверяем существование сетей и получаем значения из плана
+# Действие 2. Проверяем существование сетей и получаем значения из плана
 terraform -chdir="$virt_system/tf_data_net" init
 terraform -chdir="$virt_system/tf_data_net" plan \
   -var "var__cs_code=$client_code" \
@@ -60,9 +50,19 @@ new_gateway_a=$(terraform -chdir="$virt_system/tf_data_net" show -json tfplan.bi
 
 rm -f "$virt_system/tf_data_net/tfplan.bin"
 
-# Действие 4. Если сетей клиента нет, то создаём сети
+# Действие 3. Если сетей клиента нет, то создаём сети. Если есть и выбрано удаление, то удаляем.
 if [[ "$net_exists" == "true" ]]; then
-  echo "Сети для такого клиента существуют. Дальнейшие действия с сетями не требуются."
+  if [[ "$action" == "destroy" ]]; then
+    echo "Удаляем инфраструктуру клиента: $client_code. Для действий требуется ручное подтверждение."
+    #Удаление серверов в структуре клиента, потом сетей.
+    terraform -chdir="$virt_system/tf_network" destroy \
+        -var "var__cs_code=$client_code" \
+        -var "var__cs_gateway_a=172.16.200.1"
+    exit 0
+  else
+    echo "Сети для такого клиента существуют. Дальнейшие действия с сетями не требуются."
+  fi  
+  
 else
   echo "Создаём сети для нового клиента. Для действий требуется ручное подтверждение."
   terraform -chdir="$virt_system/tf_network" init
@@ -71,5 +71,5 @@ else
     -var "var__cs_gateway_a=$new_gateway_a"
 fi
 
-# Действие 5. Создание серверов
+# Действие 4. Создание серверов
 # ...
