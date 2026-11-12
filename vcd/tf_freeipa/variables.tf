@@ -11,6 +11,7 @@ variable "vm_hw" {
 }
 variable "var__vm_ip" {
   type    = string
+  default = ""
 }
 
 
