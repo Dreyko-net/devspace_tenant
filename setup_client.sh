@@ -55,16 +55,16 @@ if [[ "$net_exists" == "true" ]]; then
   if [[ "$action" == "destroy" ]]; then
     echo "Удаляем инфраструктуру клиента: ${client_code^^}. Для действий требуется ручное подтверждение."
     #Удаляем сервера по очереди
-    terraform -chdir="$virt_system/tf_gw" init
-    terraform -chdir="$virt_system/tf_gw" destroy \
-    -var "var__cs_code=${client_code^^}" \
-    -var "var__vm_name=gw.${client_code,,}.devspace.lan" \
-    -var "var__cs_gateway_a=$final_gateway"
+    # terraform -chdir="$virt_system/tf_gw" init
+    # terraform -chdir="$virt_system/tf_gw" destroy \
+    # -var "var__cs_code=${client_code^^}" \
+    # -var "var__vm_name=gw.${client_code,,}.devspace.lan" \
+    # -var "var__cs_gateway_a=$final_gateway"
 
-    terraform -chdir="$virt_system/tf_dc" init
-    terraform -chdir="$virt_system/tf_dc" destroy \
+    terraform -chdir="$virt_system/tf_idm" init
+    terraform -chdir="$virt_system/tf_idm" destroy \
         -var "var__cs_code=${client_code^^}" \
-        -var "var__vm_name=dc.${client_code,,}.devspace.lan" 
+        -var "var__vm_name=idm.${client_code,,}.devspace.lan" 
     
     terraform -chdir="$virt_system/tf_idp" init
     terraform -chdir="$virt_system/tf_idp" destroy \
@@ -96,12 +96,12 @@ fi
 # Действие 4. Создание серверов
 # 4.1 GW
 
-echo "Создаём сервер DC (FreeIPA) для нового клиента. Для действий требуется ручное подтверждение."
-terraform -chdir="$virt_system/tf_gw" init
-terraform -chdir="$virt_system/tf_gw" apply \
-    -var "var__cs_code=${client_code^^}" \
-    -var "var__vm_name=gw.${client_code,,}.devspace.lan" \
-    -var "var__cs_gateway_a=$final_gateway"
+# echo "Создаём сервер GW для нового клиента. Для действий требуется ручное подтверждение."
+# terraform -chdir="$virt_system/tf_gw" init
+# terraform -chdir="$virt_system/tf_gw" apply \
+#     -var "var__cs_code=${client_code^^}" \
+#     -var "var__vm_name=gw.${client_code,,}.devspace.lan" \
+#     -var "var__cs_gateway_a=$final_gateway"
 
 
 # 4.2 Контроллер
@@ -112,10 +112,10 @@ print(ip + int(sys.argv[2]))
 ' "$final_gateway" "2")
 
 echo "Создаём сервер DC (FreeIPA) для нового клиента. Для действий требуется ручное подтверждение."
-terraform -chdir="$virt_system/tf_dc" init
-terraform -chdir="$virt_system/tf_dc" apply \
+terraform -chdir="$virt_system/tf_idm" init
+terraform -chdir="$virt_system/tf_idm" apply \
     -var "var__cs_code=${client_code^^}" \
-    -var "var__vm_name=dc.${client_code,,}.devspace.lan" \
+    -var "var__vm_name=idm.${client_code,,}.devspace.lan" \
     -var "var__vm_ip=$var__dc_ip"
 
 # 4.3 IDP
@@ -147,5 +147,5 @@ terraform -chdir="$virt_system/tf_app" apply \
     -var "var__vm_name=app-01.${client_code,,}.devspace.lan" \
     -var "var__vm_ip=$var__app_ip"
 
-роки все сервера кроме GW
-    bld + GW
+# роки все сервера кроме GW
+#     bld + GW
